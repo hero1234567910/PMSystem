@@ -1,4 +1,6 @@
-/target/
+/backCode/PMSystem/target/
+/backCode/PMSystem/.idea/
+/backCode/PMSystem/var/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
