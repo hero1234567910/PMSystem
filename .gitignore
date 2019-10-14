@@ -1,6 +1,6 @@
-/代码/backCode/PMSystem/target/
-/代码/backCode/PMSystem/.idea/
-/代码/backCode/PMSystem/var/
+代码/backCode/PMSystem/target/
+代码/backCode/PMSystem/.idea/
+代码/backCode/PMSystem/var/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
