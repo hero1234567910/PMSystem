@@ -9,9 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>hero</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>hero</name>
+	<name>PMSystem</name>
 	<description>project for vue</description>
 
 	<properties>
@@ -234,4 +233,5 @@
 	</build>
 	
 	<packaging>war</packaging>
+	<artifactId>PMSystem</artifactId>
 </project>
