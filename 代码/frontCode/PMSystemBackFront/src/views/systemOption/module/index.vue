@@ -281,33 +281,6 @@ export default {
       	}
       })
     },
-  	//获取树数据
-  	getTreeData(){
-  		this.listLoading = true
-      getTrees().then(response => {
-      	if(response.code == '0'){
-      		this.data = response.data
-	        this.listLoading = false
-      	}
-      })
-  	},
-  	//选择上级菜单
-    checkChange(item,node,self){
-        if (node == true) {
-           this.$refs.tree.setCheckedKeys([item.moduleCode])
-           this.temp.pmoduleCode = item.moduleCode
-        }else {
-        	this.temp.pmoduleCode = ''
-           if (this.editCheckId == item.moduleCode) {
-               this.$refs.tree.setCheckedKeys([item.moduleCode])
-           }
-        }
-   	},
-   	
-    resetTemp() {
-      this.temp = {}
-    },
-    
     //新增数据
     handleCreate() {
       this.resetTemp()
@@ -421,6 +394,33 @@ export default {
 //          message: '已取消删除'
 //        });          
         });
+    },
+    
+  	//获取树数据
+  	getTreeData(){
+  		this.listLoading = true
+      getTrees().then(response => {
+      	if(response.code == '0'){
+      		this.data = response.data
+	        this.listLoading = false
+      	}
+      })
+  	},
+  	//选择上级菜单
+    checkChange(item,node,self){
+        if (node == true) {
+           this.$refs.tree.setCheckedKeys([item.moduleCode])
+           this.temp.pmoduleCode = item.moduleCode
+        }else {
+        	this.temp.pmoduleCode = ''
+           if (this.editCheckId == item.moduleCode) {
+               this.$refs.tree.setCheckedKeys([item.moduleCode])
+           }
+        }
+   	},
+   	
+    resetTemp() {
+      this.temp = {}
     },
     
     //导出当页word
