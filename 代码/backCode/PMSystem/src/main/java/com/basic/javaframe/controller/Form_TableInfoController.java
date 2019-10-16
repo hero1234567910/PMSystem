@@ -53,7 +53,7 @@ public class Form_TableInfoController extends BaseController{
     @PassToken
     @ApiOperation(value = "查询表单列表")
     @ResponseBody
-    @RequestMapping(value = "/getTableInfo",produces="application/json;charset=utf-8",method= RequestMethod.GET)
+    @RequestMapping(value = "/listData",produces="application/json;charset=utf-8",method= RequestMethod.GET)
     public LayuiUtil getTableInfo(@RequestParam Map<String, Object> params){
         Query query = new Query(params);
         List<Form_TableInfo> list = tableInfoService.selectFormTableInfoList(query);
@@ -115,7 +115,7 @@ public class Form_TableInfoController extends BaseController{
         String uuid = UUID.randomUUID().toString();
         form_tableInfo.setRowGuid(uuid);
         tableInfoService.insertFormTableInfo(form_tableInfo);
-        return R.ok();
+        return R.ok().put("data", form_tableInfo);
     }
 
     /**
@@ -128,8 +128,8 @@ public class Form_TableInfoController extends BaseController{
      */
     @ApiOperation(value = "修改表单")
     @ResponseBody
-    @RequestMapping(value = "/updateTableInfo/{id}",produces="application/json;charset=utf-8",method= RequestMethod.PUT)
-    public R updateTableInfo(@PathVariable("id") Integer id,@RequestBody Form_TableInfo formTableInfo)throws Exception{
+    @RequestMapping(value = "/updateTableInfo",produces="application/json;charset=utf-8",method= RequestMethod.PUT)
+    public R updateTableInfo(@RequestBody Form_TableInfo formTableInfo)throws Exception{
     	System.out.println(formTableInfo.getOriginName());
     	//连接数据库
 		Class.forName(driver);
@@ -157,8 +157,6 @@ public class Form_TableInfoController extends BaseController{
 		// 释放资源
 		stat.close();
         conn.close();
-    	
-    	formTableInfo.setRowId(id);
         tableInfoService.updateFormTableInfo(formTableInfo);
         return R.ok();
     }
@@ -174,8 +172,8 @@ public class Form_TableInfoController extends BaseController{
      */
     @ApiOperation(value="删除多个表单")
     @ResponseBody
-    @RequestMapping(value="/deleteTableInfo/{id}",produces="application/json;charset=utf-8",method=RequestMethod.POST)
-    public R deleteTableInfo(@PathVariable("id")Integer[] ids) throws Exception{
+    @RequestMapping(value="/deleteTableInfo",produces="application/json;charset=utf-8",method=RequestMethod.POST)
+    public R deleteTableInfo(@RequestBody Integer[] ids) throws Exception{
     	//加上事务
     	
     	//连接数据库

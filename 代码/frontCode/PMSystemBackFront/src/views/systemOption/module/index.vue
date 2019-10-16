@@ -149,16 +149,6 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -192,7 +182,7 @@ const hiddenKeyValue = hiddenOptions.reduce((acc, cur) => {
 
 
 export default {
-  name: 'ComplexTable',
+  name: 'module',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -216,11 +206,9 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        importance: undefined,
         title: undefined,
         type: undefined
       },
-      importanceOptions: [1, 2, 3],
       breadcrumbOptions,
       hiddenOptions,
       noCacheOptions,
@@ -245,8 +233,6 @@ export default {
         create: 'Create',
         details: 'Details'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         hidden: [{ required: true, message: 'hidden is required', trigger: 'change' }],
         name: [{ required: true, message: 'name is required', trigger: 'blur' }],

@@ -1,17 +1,10 @@
 <template>
   <div class="app-container" v-cloak>
   	<el-row>
-		  <el-col :span="4">
-		  	<el-tree :data="data" 
-	    		:props="defaultProps" 
-	    		node-key="deptCode"
-	    		ref="tree"
-	    		>
-		  	</el-tree>
-		  </el-col>
-		  <el-col :span="20">
+		  <el-col :span="24">
 		  	<div class="filter-container">
-		      <el-input v-model="listQuery.deptName" placeholder="部门名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+		      <el-input v-model="listQuery.tableName" placeholder="表名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+		      <el-input v-model="listQuery.physicalName" placeholder="物理表名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
 		      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
 		        Search
 		      </el-button>
@@ -38,29 +31,19 @@
 		          <span>{{ scope.row.rowId }}</span>
 		        </template>
 		      </el-table-column>
-		      <el-table-column label="创建时间" sortable="custom" prop="createTime" :class-name="getSortClass('createTime')" width="155" align="center">
+		      <el-table-column label="数据表名称"   align="center" width="130">
 		        <template slot-scope="scope">
-		          <span>{{ scope.row.createTime }}</span>
+		          <span>{{ scope.row.tableName }}</span>
 		        </template>
 		      </el-table-column>
-		      <el-table-column label="更新时间"  sortable="custom" prop="updateTime" align="center" width="155" :class-name="getSortClass('updateTime')">
+		      <el-table-column label="数据表物理名称"   align="center" width="200" >
 		        <template slot-scope="scope">
-		          <span>{{ scope.row.updateTime }}</span>
+		          <span>{{ scope.row.physicalName }}</span>
 		        </template>
 		      </el-table-column>
-		      <el-table-column label="部门名称"   align="center" width="130">
+		      <el-table-column label="控制器名称"  align="center" width="300" >
 		        <template slot-scope="scope">
-		          <span>{{ scope.row.deptName }}</span>
-		        </template>
-		      </el-table-column>
-		      <el-table-column label="部门简称"   align="center" width="130" >
-		        <template slot-scope="scope">
-		          <span>{{ scope.row.shortName }}</span>
-		        </template>
-		      </el-table-column>
-		      <el-table-column label="地址"  align="center" width="200" >
-		        <template slot-scope="scope">
-		          <span>{{ scope.row.address }}</span>
+		          <span>{{ scope.row.controllerName }}</span>
 		        </template>
 		      </el-table-column>
 		      <el-table-column label="Actions" align="center" min-width="300" class-name="small-padding fixed-width">
@@ -82,33 +65,14 @@
 		
 		    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
 		      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="170px" style="width: 400px; margin-left:50px;">
-		        <el-form-item label="部门名称" prop="deptName">
-		          <el-input v-model="temp.deptName" />
+		        <el-form-item label="数据表名称" prop="tableName">
+		          <el-input v-model="temp.tableName" />
 		        </el-form-item>
-		        <el-form-item label="部门简称">
-		          <el-input v-model="temp.shortName" />
+		        <el-form-item label="数据表物理名称" prop="physicalName">
+		          <el-input v-model="temp.physicalName"/>
 		        </el-form-item>
-		        <el-form-item label="地址">
-		          <el-input v-model="temp.address" />
-		        </el-form-item>
-		        <el-form-item label="联系电话">
-		          <el-input v-model="temp.tel" />
-		        </el-form-item>
-		         <el-form-item label="部门编码">
-		          <el-input v-model="temp.oucode" />
-		        </el-form-item>
-		        <el-form-item label="部门描述">
-		          <el-input v-model="temp.description" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="请输入内容" />
-		        </el-form-item>
-		        <!--选择父级部门-->
-		        <el-form-item label="选择父级部门">
-		        	<el-tree :data="data" 
-		        		:props="defaultProps" 
-		        		show-checkbox 
-		        		@check-change="checkChange" 
-		        		ref="tree" 
-		        		node-key="deptCode"
-		        		:check-strictly="true"></el-tree>
+		        <el-form-item label="控制器名称" prop="controllerName">
+		          <el-input v-model="temp.controllerName"/>
 		        </el-form-item>
 		      </el-form>
 		      <div slot="footer" class="dialog-footer">
@@ -128,7 +92,7 @@
 </template>
 
 <script>
-import { listData,add,getTrees,updateDept,deleteDept } from '@/api/systemOption/dept'
+import { listData,add,getTrees,updateDept,deleteDept } from '@/api/systemOption/form'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -138,7 +102,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 
 
 export default {
-  name: 'dept',
+  name: 'form',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -153,16 +117,14 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
+        tableName:'',
+        physicalName:''
       },
       showReviewer: false,
       temp: {
-       		deptName:'',
-       		shortName:'',
-       		address:'',
-       		tel:'',
-       		oucode:'',
-       		description:'',
-       		pdeptCode:''
+	    	tableName:'',
+	    	physicalName:'',
+	    	controllerName:''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -172,7 +134,9 @@ export default {
         details: 'Details'
       },
       rules: {
-        deptName: [{ required: true, message: 'deptName is required', trigger: 'blur' }],
+        tableName: [{ required: true, message: 'tableName is required', trigger: 'blur' }],
+        physicalName: [{ required: true, message: 'physicalName is required', trigger: 'blur' }],
+        controllerName: [{ required: true, message: 'controllerName is required', trigger: 'blur' }]
       },
       downloadLoading: false,
       data: [],
@@ -184,8 +148,6 @@ export default {
     }
   },
   created() {
-  	//获取树数据
-  	this.getTreeData(),
   	//获取列表数据
     this.getList()
   },
@@ -207,8 +169,6 @@ export default {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
-      	//清空树勾选
-      	this.$refs.tree.setCheckedKeys([])
       	//清空过滤条件
         this.$refs['dataForm'].clearValidate()
       })
@@ -239,7 +199,6 @@ export default {
     	//$nextTick用于延迟执行一段代码
     	//有些还未加载完成 所以需要延迟函数
     	this.$nextTick(() => {
-    		this.$refs.tree.setCheckedKeys([this.temp.pdeptCode])
     		this.$refs['dataForm'].clearValidate()
     	})
     },
@@ -251,7 +210,6 @@ export default {
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
-    		this.$refs.tree.setCheckedKeys([this.temp.pdeptCode])
         this.$refs['dataForm'].clearValidate()
       })
     },
@@ -276,8 +234,6 @@ export default {
               duration: 2000
             })
 	    			this.dialogFormVisible = false
-		    		//刷新树
-		    		this.getTreeData()
           })
         }
       })
@@ -292,7 +248,7 @@ export default {
         }).then(() => {
           //后端定义数组入参
 		    	let arr = []
-		    	arr.push(row.rowGuid)
+		    	arr.push(row.rowId)
 		    	deleteDept(arr).then(res => {
 			    		this.$notify({
 			        title: 'Success',
@@ -303,8 +259,6 @@ export default {
 			    	//静态刷新，增加性能
 				    const index = this.list.indexOf(row)
 				    this.list.splice(index, 1)
-				    //刷新树
-            this.getTreeData()
 		    	})
         }).catch(() => {
 //        this.$message({
@@ -313,31 +267,7 @@ export default {
 //        });          
         });
     },
-  	//获取树数据
-  	async getTreeData(){
-  		this.listLoading = true
-     	await getTrees().then(res => {
-     		let obj = [{
-	      	label: '根目录',
-	      	deptCode:'0',
-	        children: res.data
-      	}]
-     		this.data = obj
-     	})
-     	this.listLoading = false
-  	},
   	
-  	//选择上级菜单
-    checkChange(item,node,self){
-    		if (node == true) {
-           this.$refs.tree.setCheckedKeys([item.deptCode])
-           this.temp.pdeptCode = item.deptCode
-        }
-    		if(item.deptCode === '0' && node == true){
-    			this.temp.pdeptCode = '0'
-    		}
-   	},
-   	
     resetTemp() {
       this.temp = {}
     },

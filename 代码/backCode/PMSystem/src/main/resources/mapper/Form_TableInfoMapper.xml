@@ -37,7 +37,7 @@
     </select>
 
     <!-- 新增角色  -->
-    <insert id="insertFormTableInfo" parameterType="com.basic.javaframe.entity.Form_TableInfo" useGeneratedKeys="true" keyProperty="row_id">
+    <insert id="insertFormTableInfo" parameterType="com.basic.javaframe.entity.Form_TableInfo" useGeneratedKeys="true" keyProperty="rowId">
         insert into form_tableinfo (
 			 `row_id`,
 			  `row_guid`,
