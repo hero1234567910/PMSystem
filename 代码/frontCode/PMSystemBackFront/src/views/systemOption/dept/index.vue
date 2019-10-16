@@ -1,11 +1,12 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-cloak>
   	<el-row>
 		  <el-col :span="4">
 		  	<el-tree :data="data" 
 	    		:props="defaultProps" 
 	    		node-key="deptCode"
-	    		:check-strictly="true">
+	    		ref="tree"
+	    		>
 		  	</el-tree>
 		  </el-col>
 		  <el-col :span="20">
@@ -148,7 +149,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination,HeroTree },
   directives: { waves },
   filters: {
     
@@ -191,11 +192,11 @@ export default {
       },
       downloadLoading: false,
       data: [],
-      data2:[],
 	    defaultProps: {
 	      children: 'children',
 	      label: 'label'
-	    },
+	    }
+	    
     }
   },
   created() {
@@ -241,8 +242,6 @@ export default {
               type: 'success',
               duration: 2000
             })
-            //刷新树
-            this.getTreeData()
           })
         }
       })
@@ -256,7 +255,7 @@ export default {
     	//$nextTick用于延迟执行一段代码
     	//有些还未加载完成 所以需要延迟函数
     	this.$nextTick(() => {
-    		this.$refs.tree.setCheckedKeys([this.temp.deptCode])
+    		this.$refs.tree.setCheckedKeys([this.temp.pdeptCode])
     		this.$refs['dataForm'].clearValidate()
     	})
     },
@@ -264,12 +263,11 @@ export default {
     //更新数据
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      console.log(this.temp)
       this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
-    		this.$refs.tree.setCheckedKeys([this.temp.deptCode])
+    		this.$refs.tree.setCheckedKeys([this.temp.pdeptCode])
         this.$refs['dataForm'].clearValidate()
       })
     },
@@ -287,15 +285,15 @@ export default {
                 break
               }
             }
-            this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
               message: 'Update Successfully',
               type: 'success',
               duration: 2000
             })
-            //刷新树
-            this.getTreeData()
+	    			this.dialogFormVisible = false
+		    		//刷新树
+		    		this.getTreeData()
           })
         }
       })
@@ -332,28 +330,28 @@ export default {
         });
     },
   	//获取树数据
-  	getTreeData(){
+  	async getTreeData(){
   		this.listLoading = true
-      getTrees().then(response => {
-      	if(response.code == '0'){
-      		this.data = response.data
-      		this.data2 = response.data
-	        this.listLoading = false
-      	}
-      })
+     	await getTrees().then(res => {
+     		let obj = [{
+	      	label: '根目录',
+	      	deptCode:'0',
+	        children: res.data
+      	}]
+     		this.data = obj
+     	})
+     	this.listLoading = false
   	},
+  	
   	//选择上级菜单
     checkChange(item,node,self){
-        if (node == true) {
+    		if (node == true) {
            this.$refs.tree.setCheckedKeys([item.deptCode])
-           console.log(item.deptCode+" 666")
            this.temp.pdeptCode = item.deptCode
-        }else {
-        	this.temp.pdeptCode = ''
-           if (this.editCheckId == item.deptCode) {
-               this.$refs.tree.setCheckedKeys([item.deptCode])
-           }
         }
+    		if(item.deptCode === '0' && node == true){
+    			this.temp.pdeptCode = '0'
+    		}
    	},
    	
     resetTemp() {
