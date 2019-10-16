@@ -21,6 +21,7 @@
         <result property="lastloginTime" column="lastlogin_time"></result>
         <result property="sortSq" column="sort_sq"></result>
         <result property="openid" column="openid"></result>
+        <result property="updateTime" column="update_time"></result>
         <association property="Frame_Role_User" javaType="com.basic.javaframe.entity.Frame_Role_User">
             <result property="rowId" column="row_id"></result>
             <result property="userGuid" column="user_guid"></result>
@@ -140,7 +141,8 @@
 			  `is_forbid`,
 			  `lastlogin_time`,
 			  `sort_sq`,
-			  `openid`
+			  `openid`,
+			  `update_time`
 		) values (
 			  #{rowId},
 			  #{rowGuid},
@@ -158,7 +160,8 @@
 			  #{isForbid},
 			  #{lastloginTime},
 			  #{sortSq},
-			  #{openid}
+			  #{openid},
+			  #{updateTime}
 		);
 	</insert>
 
@@ -181,7 +184,8 @@
             <if test="isForbid != null">`is_forbid` = #{isForbid},</if>
             <if test="lastloginTime != null">`lastlogin_time` = #{lastloginTime},</if>
             <if test="sortSq != null">`sort_sq` = #{sortSq},</if>
-            <if test="openid != null">`openid` = #{openid}</if>
+            <if test="openid != null">`openid` = #{openid},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime}</if>
         </set>
         where row_guid = #{rowGuid}
     </update>
@@ -249,6 +253,7 @@
             <if test="lastloginTime != null and lastloginTime != ''">and t.lastlogin_time = #{lastloginTime}</if>
             <if test="sortSq  != null and sortSq!= ''">and t.sort_sq = #{sortSq }</if>
             <if test="openid != null">and t.openid = #{openid}</if>
+            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
             and t.del_flag = 0
         </where>
     </sql>
@@ -274,6 +279,7 @@
             <if test="lastloginTime != null and lastloginTime != ''">and t.lastlogin_time = #{lastloginTime}</if>
             <if test="sortSq  != null and sortSq!= ''">and t.sort_sq = #{sortSq }</if>
             <if test="openid != null">and t.openid = #{openid}</if>
+            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
             and t.del_flag = 0
         </where>
     </sql>

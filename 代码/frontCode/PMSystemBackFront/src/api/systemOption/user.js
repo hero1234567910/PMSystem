@@ -10,7 +10,7 @@ export function listData(query) {
 
 export function addUser(data) {
   return request({
-    url: '/sys/user/add',
+    url: '/sys/user/addUser',
     method: 'post',
     data
   })

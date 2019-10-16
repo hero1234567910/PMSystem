@@ -85,7 +85,7 @@ public class Frame_UserController {
     @PassToken
     @ApiOperation(value = "获取所有正常用户")
     @ResponseBody
-    @RequestMapping(value = "/getAll", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+    @RequestMapping(value = "/listData", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
     public LayuiUtil getUser(@RequestParam Map<String, Object> params) {
         Query query = new Query(params);
         List<Frame_User> userList = userService.getUser(query);
@@ -105,7 +105,7 @@ public class Frame_UserController {
      */
     @ApiOperation(value = "新增用户")
     @ResponseBody
-    @RequestMapping(value = "/add", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+    @RequestMapping(value = "/addUser", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
     public R insert(@RequestBody Map<String, Object> params) {
         Frame_User user = JSON.parseObject(JSON.toJSONString(params.get("user")), Frame_User.class);
         //生成uuid作为rowguid
@@ -117,6 +117,9 @@ public class Frame_UserController {
         user.setCreateTime(createTime);
         //密码hash加密
         String password = AESUtil.encrypt(user.getPassword(),"expsoft1234");
+        if (StringUtil.isBlank(user.getDeptGuid())) {
+            user.setDeptGuid("0");
+        }
         if (password == null) {
             String pass1 = configService.getDefaultPassWord();
             String pass2 = AESUtil.encrypt(pass1, "expsoft1234");
@@ -130,7 +133,7 @@ public class Frame_UserController {
         //插入用户与角色关系
         List<String> roles = (List<String>) params.get("roles");
         if (roles.size() == 0) {
-            return R.ok();
+            return R.ok().put("data",user);
         }
         List<Frame_Role_User> roUserList = new ArrayList<>();
         for (String role : roles) {
@@ -140,7 +143,8 @@ public class Frame_UserController {
             roUserList.add(roUser);
         }
         roleUserService.insertBatch(roUserList);
-        return R.ok();
+        //System.out.println(user);
+        return R.ok().put("data",user);
     }
 
     /**
@@ -155,7 +159,7 @@ public class Frame_UserController {
      */
     @ApiOperation(value = "更新用户")
     @ResponseBody
-    @RequestMapping(value = "/update", produces = "application/json;charset=utf-8", method = RequestMethod.PUT)
+    @RequestMapping(value = "/updateUser", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
     public R update(@RequestBody Map<String, Object> params) {
         List<String> roleGuidList = (List<String>) params.get("roleGuids");
         Frame_User user = JSON.parseObject(JSON.toJSONString(params.get("roleUser")), Frame_User.class);
@@ -181,6 +185,8 @@ public class Frame_UserController {
 		}
 //        String cu = ChineseCharacterUtil.getLowerCase(user.getUserName().toLowerCase(), false);//生成小写简拼
 //        user.setLoginId(cu);
+        Date updateTime = DateUtil.changeDate(new Date());
+        user.setUpdateTime(updateTime);
         userService.update(user);
         return R.ok();
     }
@@ -395,8 +401,8 @@ public class Frame_UserController {
      */
     @ApiOperation(value = "删除多个用户")
     @ResponseBody
-    @RequestMapping(value = "/deleteUser/{rowGuid}", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-    public R deleteUser(@PathVariable("rowGuid") String[] rowGuids) {
+    @RequestMapping(value = "/deleteUser", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+    public R deleteUser(@RequestBody String[] rowGuids) {
         userService.deleteUserById(rowGuids);
         roleUserService.deleteRoleUserByGuid(rowGuids);
         return R.ok();
