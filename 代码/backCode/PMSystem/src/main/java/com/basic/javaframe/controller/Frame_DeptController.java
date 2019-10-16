@@ -106,6 +106,9 @@ public class Frame_DeptController {
     	if (StringUtil.isBlank(frameDept.getPdeptCode())) {
     		frameDept.setPdeptCode("0");
 		}
+    	if(frameDept.getDeptCode().equals(frameDept.getPdeptCode())){
+    		return R.error("不可选择自己作为父类别");
+    	}
         deptService.updateFrameDept(frameDept);
         return R.ok();
     }

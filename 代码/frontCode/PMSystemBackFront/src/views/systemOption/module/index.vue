@@ -321,7 +321,7 @@ export default {
     	//$nextTick用于延迟执行一段代码
     	//有些还未加载完成 所以需要延迟函数
     	this.$nextTick(() => {
-    		this.$refs.tree.setCheckedKeys([this.temp.moduleCode])
+    		this.$refs.tree.setCheckedKeys([this.temp.pmoduleCode])
     		this.$refs['dataForm'].clearValidate()
     	})
     },
@@ -333,7 +333,7 @@ export default {
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
-      	this.$refs.tree.setCheckedKeys([this.temp.moduleCode])
+      	this.$refs.tree.setCheckedKeys([this.temp.pmoduleCode])
         this.$refs['dataForm'].clearValidate()
       })
     },
@@ -397,26 +397,27 @@ export default {
     },
     
   	//获取树数据
-  	getTreeData(){
+  	async getTreeData(){
   		this.listLoading = true
-      getTrees().then(response => {
-      	if(response.code == '0'){
-      		this.data = response.data
-	        this.listLoading = false
-      	}
-      })
+     	await getTrees().then(res => {
+     		let obj = [{
+	      	label: '根目录',
+	      	moduleCode:'0',
+	        children: res.data
+      	}]
+     		this.data = obj
+     	})
+     	this.listLoading = false
   	},
   	//选择上级菜单
     checkChange(item,node,self){
         if (node == true) {
            this.$refs.tree.setCheckedKeys([item.moduleCode])
            this.temp.pmoduleCode = item.moduleCode
-        }else {
-        	this.temp.pmoduleCode = ''
-           if (this.editCheckId == item.moduleCode) {
-               this.$refs.tree.setCheckedKeys([item.moduleCode])
-           }
         }
+        if(item.deptCode === '0' && node == true){
+    			this.temp.pmoduleCode = '0'
+    		}
    	},
    	
     resetTemp() {
