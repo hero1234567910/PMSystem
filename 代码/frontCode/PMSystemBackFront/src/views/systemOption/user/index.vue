@@ -35,13 +35,6 @@
             icon="el-icon-download"
             @click="handleDownload"
           >ExportThisPage</el-button>
-          <!-- <el-button
-            class="filter-item"
-            style="margin-left: 10px;"
-            type="danger"
-            icon="el-icon-delete"
-            @click="handleDeleteBatch"
-          >Delete</el-button>-->
         </div>
 
         <el-table
@@ -190,16 +183,6 @@
             >Confirm</el-button>
           </div>
         </el-dialog>
-
-        <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-          <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-            <el-table-column prop="key" label="Channel" />
-            <el-table-column prop="pv" label="Pv" />
-          </el-table>
-          <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-          </span>
-        </el-dialog>
       </el-col>
     </el-row>
   </div>
@@ -249,11 +232,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        importance: undefined,
-        title: undefined,
-        type: undefined
       },
-      importanceOptions: [1, 2, 3],
       showReviewer: false,
       temp: {
         userName: "",
@@ -273,8 +252,6 @@ export default {
         create: "Create",
         details: "Details"
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         userName: [
           { required: true, message: "userName is required", trigger: "blur" }
@@ -428,40 +405,6 @@ export default {
           //        });
         });
     },
-    //批量删除
-    // handleDeleteBatch(rows){
-    // 	this.$confirm("此操作将永久删除, 是否继续?", "提示", {
-    //     confirmButtonText: "确定",
-    //     cancelButtonText: "取消",
-    //     type: "warning"
-    //   })
-    //     .then(() => {
-    //       //后端定义数组入参
-    // 	  this.multipleSelection = rows;
-    // 	  console.log(rows)
-    //       let arr = [];
-    //       arr.push(rows.rowGuid);
-    //       deleteUser(arr).then(res => {
-    //         this.$notify({
-    //           title: "Success",
-    //           message: "Delete Successfully",
-    //           type: "success",
-    //           duration: 2000
-    //         });
-    //         //静态刷新，增加性能
-    //         const index = this.list.indexOf(arr);
-    //         this.list.splice(index, 1);
-    //         //刷新树
-    //         this.getTreeData();
-    //       });
-    //     })
-    //     .catch(() => {
-    //       //        this.$message({
-    //       //          type: 'info',
-    //       //          message: '已取消删除'
-    //       //        });
-    //     });
-    // },
     //获取树数据
     async getTreeData() {
       this.listLoading = true;
