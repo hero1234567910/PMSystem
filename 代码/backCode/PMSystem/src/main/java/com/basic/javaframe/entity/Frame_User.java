@@ -5,6 +5,7 @@ import java.util.Date;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.models.auth.In;
 
 /**
  * <p>Title: Frame_User</p>
@@ -15,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Frame_User {
 
     //行标识
-    private int rowId;
+    private Integer rowId;
     //记录唯一标识
     private String rowGuid;
     //删除标识
@@ -81,11 +82,11 @@ public class Frame_User {
         this.openid = openid;
     }
 
-    public int getRowId() {
+    public Integer getRowId() {
         return rowId;
     }
 
-    public void setRowId(int rowId) {
+    public void setRowId(Integer rowId) {
         this.rowId = rowId;
     }
 
