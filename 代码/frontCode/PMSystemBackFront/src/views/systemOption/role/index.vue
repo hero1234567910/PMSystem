@@ -1,14 +1,11 @@
 <template>
   <div class="app-container" v-cloak>
     <el-row>
-      <el-col :span="4">
-        <el-tree :data="data" :props="defaultProps" node-key="rowGuid" ref="tree"></el-tree>
-      </el-col>
-      <el-col :span="20">
+      <el-col :span="24">
         <div class="filter-container">
           <el-input
-            v-model="listQuery.userName"
-            placeholder="用户名"
+            v-model="listQuery.roleName"
+            placeholder="角色名"
             style="width: 200px;"
             class="filter-item"
             @keyup.enter.native="handleFilter"
@@ -38,7 +35,7 @@
         </div>
 
         <el-table
-          ref="userTable"
+          ref="roleTable"
           :key="tableKey"
           v-loading="listLoading"
           :data="list"
@@ -72,36 +69,19 @@
               <span>{{ scope.row.createTime }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="用户名称" align="center" width="130">
+          <el-table-column label="角色名称" align="center" width="130">
             <template slot-scope="scope">
-              <span>{{ scope.row.userName }}</span>
+              <span>{{ scope.row.roleName }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="登录名" align="center" width="130">
+          <el-table-column label="首页地址" align="center" width="130">
             <template slot-scope="scope">
-              <span>{{ scope.row.loginId }}</span>
+              <span>{{ scope.row.mainIndex }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="手机号" align="center" width="150">
+          <el-table-column label="角色类型" align="center" width="150">
             <template slot-scope="scope">
-              <span>{{ scope.row.mobile }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="账号状态"
-            align="center"
-            width="100"
-          >
-            <template slot-scope="scope">
-              <el-tag
-                :type="scope.row.isForbid |getColorType" size="small"
-                disable-transitions
-              >{{scope.row.isForbid|getColorName}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="排序号" align="center" width="200">
-            <template slot-scope="scope">
-              <span>{{ scope.row.sortSq }}</span>
+              <span>{{ scope.row.roleType }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -135,43 +115,15 @@
             label-width="170px"
             style="width: 400px; margin-left:50px;"
           >
-            <el-form-item label="用户名称" prop="userName">
-              <el-input v-model="temp.userName" />
+            <el-form-item label="角色名称" prop="roleName">
+              <el-input v-model="temp.roleName" />
             </el-form-item>
-            <el-form-item label="登录名">
-              <el-input v-model="temp.loginId" />
+            <el-form-item label="角色类型">
+              <el-input v-model="temp.roleType" />
             </el-form-item>
-            <el-form-item label="性别">
-              <el-radio v-model="temp.sex" label="0">男</el-radio>
-              <el-radio v-model="temp.sex" label="1">女</el-radio>
-            </el-form-item>
-            <el-form-item label="密码">
-              <el-input v-model="temp.password" type="password" auto-complete="off" />
-            </el-form-item>
-			<el-form-item label="账号状态">
-			  <el-radio v-model="temp.isForbid" border label="0">启用</el-radio>
-              <el-radio v-model="temp.isForbid" border label="1">禁用</el-radio>
-            </el-form-item>
-            <el-form-item label="手机号">
-              <el-input v-model="temp.mobile" />
-            </el-form-item>
-            <el-form-item label="工号">
-              <el-input v-model="temp.gongHao" />
-            </el-form-item>
-            <el-form-item label="排序号">
-              <el-input v-model="temp.sortSq" />
-            </el-form-item>
-            <!--选择父级部门-->
-            <el-form-item label="选择部门">
-              <el-tree
-                :data="data"
-                :props="defaultProps"
-                show-checkbox
-                @check-change="checkChange"
-                ref="tree"
-                node-key="rowGuid"
-                :check-strictly="true"
-              ></el-tree>
+
+            <el-form-item label="首页地址">
+              <el-input v-model="temp.mainIndex" />
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -191,11 +143,10 @@
 <script>
 import {
   listData,
-  addUser,
-  getTrees,
-  updateUser,
-  deleteUser
-} from "@/api/systemOption/user";
+  addRole,
+  updateRole,
+  deleteRole
+} from "@/api/systemOption/role";
 import waves from "@/directive/waves"; // waves directive
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
 
@@ -204,24 +155,24 @@ import Pagination from "@/components/Pagination"; // secondary package based on 
 //数组转对象
 
 export default {
-  name: "user",
+  name: "role",
   components: { Pagination },
   directives: { waves },
   filters: {
-	  getColorType(colorId){
-		  const colorMap = {
-			  0:'success',
-			  1:'danger'
-		  };
-		  return colorMap[colorId]
-	  },
-	  getColorName(colorId){
-		  const colorMap = {
-			  0:'启用',
-			  1:'禁用'
-		  };
-		  return colorMap[colorId]
-	  }
+    getColorType(colorId) {
+      const colorMap = {
+        0: "success",
+        1: "danger"
+      };
+      return colorMap[colorId];
+    },
+    getColorName(colorId) {
+      const colorMap = {
+        0: "启用",
+        1: "禁用"
+      };
+      return colorMap[colorId];
+    }
   },
   data() {
     return {
@@ -231,19 +182,13 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 20
       },
       showReviewer: false,
       temp: {
-        userName: "",
-        loginId: "",
-        mobile: "",
-        sex: "",
-        gongHao: "",
-        password: "",
-        deptGuid: "",
-        sortSq: "",
-		isForbid:""
+        roleName: "",
+        roleType: "",
+        mainIndex: ""
       },
       dialogFormVisible: false,
       dialogStatus: "",
@@ -253,8 +198,8 @@ export default {
         details: "Details"
       },
       rules: {
-        userName: [
-          { required: true, message: "userName is required", trigger: "blur" }
+        roleName: [
+          { required: true, message: "roleName is required", trigger: "blur" }
         ]
       },
       downloadLoading: false,
@@ -267,10 +212,8 @@ export default {
     };
   },
   created() {
-    //获取树数据
-    this.getTreeData(),
-      //获取列表数据
-      this.getList();
+    //获取列表数据
+    this.getList();
   },
   methods: {
     //获取主列表
@@ -281,6 +224,7 @@ export default {
           this.list = response.data;
           this.total = response.count;
           this.listLoading = false;
+          console.log(this.list)
         }
       });
     },
@@ -290,8 +234,6 @@ export default {
       this.dialogStatus = "create";
       this.dialogFormVisible = true;
       this.$nextTick(() => {
-        //清空树勾选
-        this.$refs.tree.setCheckedKeys([]);
         //清空过滤条件
         this.$refs["dataForm"].clearValidate();
       });
@@ -299,10 +241,7 @@ export default {
     createData() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
-          let param = {};
-          param["roles"] = new Array();
-          param["user"] = this.temp;
-          addUser(param).then(res => {
+          addRole(this.temp).then(res => {
             //静态刷新
             this.list.unshift(res.data);
             this.dialogFormVisible = false;
@@ -325,7 +264,6 @@ export default {
       //$nextTick用于延迟执行一段代码
       //有些还未加载完成 所以需要延迟函数
       this.$nextTick(() => {
-        this.$refs.tree.setCheckedKeys([this.temp.deptGuid]);
         this.$refs["dataForm"].clearValidate();
       });
     },
@@ -337,20 +275,16 @@ export default {
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
       this.$nextTick(() => {
-        this.$refs.tree.setCheckedKeys([this.temp.deptGuid]);
         this.$refs["dataForm"].clearValidate();
       });
     },
     updateData() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
-          let param = {};
-          param["roleGuids"] = new Array();
-          param["roleUser"] = this.temp;
-          const tempData = Object.assign({}, param);
+          const tempData = Object.assign({}, this.temp);
           tempData.timestamp = +new Date(tempData.timestamp);
           //console.log(tempData); // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateUser(tempData).then(() => {
+          updateRole(tempData).then(() => {
             //静态更新
             for (const v of this.list) {
               if (v.rowGuid === this.temp.rowGuid) {
@@ -366,8 +300,6 @@ export default {
               duration: 2000
             });
             this.dialogFormVisible = false;
-            //刷新树
-            this.getTreeData();
           });
         }
       });
@@ -384,7 +316,7 @@ export default {
           //后端定义数组入参
           let arr = [];
           arr.push(row.rowGuid);
-          deleteUser(arr).then(res => {
+          deleteRole(arr).then(res => {
             this.$notify({
               title: "Success",
               message: "Delete Successfully",
@@ -395,7 +327,6 @@ export default {
             const index = this.list.indexOf(row);
             this.list.splice(index, 1);
             //刷新树
-            this.getTreeData();
           });
         })
         .catch(() => {
@@ -404,32 +335,6 @@ export default {
           //          message: '已取消删除'
           //        });
         });
-    },
-    //获取树数据
-    async getTreeData() {
-      this.listLoading = true;
-      await getTrees().then(res => {
-        let obj = [
-          {
-            label: "根目录",
-            rowGuid: "0",
-            children: res.data
-          }
-        ];
-        this.data = obj;
-      });
-      this.listLoading = false;
-    },
-
-    //选择上级菜单
-    checkChange(item, node, self) {
-      if (node == true) {
-        this.$refs.tree.setCheckedKeys([item.rowGuid]);
-        this.temp.deptGuid = item.rowGuid;
-      }
-      if (item.rowGuid === "0" && node == true) {
-        this.temp.deptGuid = "0";
-      }
     },
 
     resetTemp() {
@@ -440,13 +345,19 @@ export default {
     handleDownload() {
       this.downloadLoading = true;
       import("@/vendor/Export2Excel").then(excel => {
-        const tHeader = ["创建时间", "更新时间", "部门名", "地址", "联系电话"];
+        const tHeader = [
+          "创建时间",
+          "更新时间",
+          "角色名",
+          "首页地址",
+          "角色类型"
+        ];
         const filterVal = [
           "createTime",
           "updateTime",
-          "userName",
-          "mobile",
-          "tel"
+          "roleName",
+          "mainIndex",
+          "roleType"
         ];
         const data = this.formatJson(filterVal, this.list);
         excel.export_json_to_excel({

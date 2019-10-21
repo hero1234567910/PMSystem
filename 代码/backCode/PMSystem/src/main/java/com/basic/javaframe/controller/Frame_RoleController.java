@@ -51,7 +51,7 @@ public class Frame_RoleController {
     @PassToken
     @ApiOperation(value = "查询角色列表")
     @ResponseBody
-    @RequestMapping(value = "/getRole",produces="application/json;charset=utf-8",method= RequestMethod.GET)
+    @RequestMapping(value = "/listData",produces="application/json;charset=utf-8",method= RequestMethod.GET)
     public LayuiUtil getRole(@RequestParam Map<String, Object> params){
         Query query = new Query(params);
         List<Frame_Role> list = roleService.selectFrameRoleList(query);
@@ -85,13 +85,15 @@ public class Frame_RoleController {
      */
     @ApiOperation(value = "新增角色")
     @ResponseBody
-    @RequestMapping(value = "/add",produces="application/json;charset=utf-8",method= RequestMethod.POST)
+    @RequestMapping(value = "/addRole",produces="application/json;charset=utf-8",method= RequestMethod.POST)
     public R addRole(@RequestBody Frame_Role frame_role){
         //生成uuid作为rowguid
         String uuid = UUID.randomUUID().toString();
+        Date createTime = DateUtil.changeDate(new Date());
         frame_role.setRowGuid(uuid);
+        frame_role.setCreateTime(createTime);
         roleService.insertFrameRole(frame_role);
-        return R.ok();
+        return R.ok().put("data",frame_role);
     }
 
     /**
@@ -104,9 +106,10 @@ public class Frame_RoleController {
      */
     @ApiOperation(value = "修改角色")
     @ResponseBody
-    @RequestMapping(value = "/updateRole/{id}",produces="application/json;charset=utf-8",method= RequestMethod.PUT)
-    public R updateRole(@PathVariable("id") Integer id,@RequestBody Frame_Role frameRole){
-        frameRole.setRowId(id);
+    @RequestMapping(value = "/updateRole",produces="application/json;charset=utf-8",method= RequestMethod.POST)
+    public R updateRole(@RequestBody Frame_Role frameRole){
+        Date updateTime = DateUtil.changeDate(new Date());
+        frameRole.setUpdateTime(updateTime);
         roleService.updateFrameRole(frameRole);
         return R.ok();
     }
@@ -116,7 +119,7 @@ public class Frame_RoleController {
      * <p>Title: deleteRole</p>
      * <p>Description: 角色</p>
      * @author my
-     * @param rowGuid
+     * @param rowGuids
      * @return
      */
     @ApiOperation(value="删除角色的所有内容")

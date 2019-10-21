@@ -1,10 +1,13 @@
 package com.basic.javaframe.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
  * <p>Title: Frame_Role</p>
  * <p>Description: 角色管理实体</p>
+ *
  * @author wzl
  */
 public class Frame_Role {
@@ -15,6 +18,7 @@ public class Frame_Role {
     //删除标识
     private int delFlag;
     //创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
     //角色名称
     private String roleName;
@@ -24,8 +28,11 @@ public class Frame_Role {
     private String mainIndex;
     //排序号
     private int sortSq;
+    //更新时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateTime;
 
-      public Integer getRowId() {
+    public Integer getRowId() {
         return rowId;
     }
 
@@ -78,15 +85,22 @@ public class Frame_Role {
     }
 
     public void setMainIndex(String mainIndex) {
-       this.mainIndex = mainIndex;
+        this.mainIndex = mainIndex;
     }
 
     public int getSortSq() {
         return sortSq;
     }
 
-    public void setSortSq(int sortSq){ this.sortSq = sortSq;}
+    public void setSortSq(int sortSq) {
+        this.sortSq = sortSq;
+    }
 
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 }
