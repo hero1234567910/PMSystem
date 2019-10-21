@@ -94,6 +94,7 @@
               <el-button size="mini" type="success" @click="handleDetail(row)">Details</el-button>
               <el-button type="primary" size="mini" @click="handleUpdate(row)">Edit</el-button>
               <el-button size="mini" type="danger" @click="handleDelete(row)">Delete</el-button>
+              <el-button size="mini" type="info" @click="handleMore(row)">more</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -135,6 +136,99 @@
             >Confirm</el-button>
           </div>
         </el-dialog>
+
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogListVisible" width="65%">
+          <div class="app-container" v-cloak>
+            <el-row>
+              <el-col :span="24">
+                <div class="filter-container">
+                  <el-button
+                    v-waves
+                    :loading="downloadLoading"
+                    class="filter-item"
+                    type="primary"
+                    icon="el-icon-download"
+                    @click="handleDownload"
+                  >ExportThisPage</el-button>
+                </div>
+
+                <el-table
+                  ref="userTable"
+                  :key="tableKey"
+                  v-loading="listLoading"
+                  :data="userList"
+                  border
+                  fit
+                  highlight-current-row
+                  style="width: 100%;margin-top: 13px;"
+                  @sort-change="sortChange"
+                >
+                  <el-table-column
+                    label="ID"
+                    prop="rowId"
+                    sortable="custom"
+                    :class-name="getSortClass('rowId')"
+                    width="80"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <span>{{ scope.row.rowId }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="创建时间"
+                    sortable="custom"
+                    prop="createTime"
+                    :class-name="getSortClass('createTime')"
+                    width="155"
+                    align="center"
+                  >
+                    <template slot-scope="scope">
+                      <span>{{ scope.row.createTime }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="用户名称" align="center" width="130">
+                    <template slot-scope="scope">
+                      <span>{{ scope.row.userName }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="登录名" align="center" width="130">
+                    <template slot-scope="scope">
+                      <span>{{ scope.row.loginId }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="手机号" align="center" width="150">
+                    <template slot-scope="scope">
+                      <span>{{ scope.row.mobile }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="账号状态" align="center" width="100">
+                    <template slot-scope="scope">
+                      <el-tag
+                        :type="scope.row.isForbid |getColorType"
+                        size="small"
+                        disable-transitions
+                      >{{scope.row.isForbid|getColorName}}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="排序号" align="center" width="200">
+                    <template slot-scope="scope">
+                      <span>{{ scope.row.sortSq }}</span>
+                    </template>
+                  </el-table-column>
+                </el-table>
+
+                <pagination
+                  v-show="total>0"
+                  :total="total"
+                  :page.sync="listQuery.page"
+                  :limit.sync="listQuery.limit"
+                  @pagination="getList"
+                />
+              </el-col>
+            </el-row>
+          </div>
+        </el-dialog>
       </el-col>
     </el-row>
   </div>
@@ -145,7 +239,8 @@ import {
   listData,
   addRole,
   updateRole,
-  deleteRole
+  deleteRole,
+  getUserFromRole
 } from "@/api/systemOption/role";
 import waves from "@/directive/waves"; // waves directive
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
@@ -178,8 +273,11 @@ export default {
     return {
       tableKey: 0,
       list: null,
+      userList: null,
       total: 0,
+      userTotal: 0,
       listLoading: true,
+      userListLoading: true,
       listQuery: {
         page: 1,
         limit: 20
@@ -191,11 +289,13 @@ export default {
         mainIndex: ""
       },
       dialogFormVisible: false,
+      dialogListVisible: false,
       dialogStatus: "",
       textMap: {
         update: "Edit",
         create: "Create",
-        details: "Details"
+        details: "Details",
+        more: "More"
       },
       rules: {
         roleName: [
@@ -224,7 +324,6 @@ export default {
           this.list = response.data;
           this.total = response.count;
           this.listLoading = false;
-          console.log(this.list)
         }
       });
     },
@@ -335,6 +434,25 @@ export default {
           //          message: '已取消删除'
           //        });
         });
+    },
+
+    //查看角色人员
+    handleMore(row) {
+      this.temp = Object.assign({}, row);
+      this.dialogStatus = "more";
+      this.dialogListVisible = true;
+      //$nextTick用于延迟执行一段代码
+      //有些还未加载完成 所以需要延迟函数
+      this.$nextTick(() => {
+        getUserFromRole(this.listQuery, row.rowGuid).then(response => {
+          if (response.code == "0") {
+            this.userList = response.data;
+            this.userTotal = response.count;
+            this.userListLoading = false;
+            console.log(this.list);
+          }
+        });
+      });
     },
 
     resetTemp() {

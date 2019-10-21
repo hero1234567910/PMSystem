@@ -31,3 +31,11 @@ export function updateRole(data) {
     data
   })
 }
+
+export function getUserFromRole(query, rowGuid) {
+  return request({
+    url: '/sys/user/getUserFromRole?roleGuid=' + rowGuid,
+    method: 'get',
+    params: query
+  })
+}
