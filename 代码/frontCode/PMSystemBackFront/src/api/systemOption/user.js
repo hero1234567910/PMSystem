@@ -38,3 +38,17 @@ export function updateUser(data) {
     data
   })
 }
+
+export function getAllRoles() {
+  return request({
+    url: '/sys/role/getAllRole',
+    method: 'get'
+  })
+}
+
+export function getCheckedRole(data) {
+  return request({
+    url: '/sys/user/getCheckedRole?userGuid=' + data,
+    method: 'get'
+  })
+}

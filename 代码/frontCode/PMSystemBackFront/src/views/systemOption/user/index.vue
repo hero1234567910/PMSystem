@@ -87,14 +87,11 @@
               <span>{{ scope.row.mobile }}</span>
             </template>
           </el-table-column>
-          <el-table-column
-            label="账号状态"
-            align="center"
-            width="100"
-          >
+          <el-table-column label="账号状态" align="center" width="100">
             <template slot-scope="scope">
               <el-tag
-                :type="scope.row.isForbid |getColorType" size="small"
+                :type="scope.row.isForbid |getColorType"
+                size="small"
                 disable-transitions
               >{{scope.row.isForbid|getColorName}}</el-tag>
             </template>
@@ -133,46 +130,65 @@
             :model="temp"
             label-position="left"
             label-width="170px"
-            style="width: 400px; margin-left:50px;"
+            style="width: 470px; margin-left:50px;"
           >
-            <el-form-item label="用户名称" prop="userName">
-              <el-input v-model="temp.userName" />
-            </el-form-item>
-            <el-form-item label="登录名">
-              <el-input v-model="temp.loginId" />
-            </el-form-item>
-            <el-form-item label="性别">
-              <el-radio v-model="temp.sex" label="0">男</el-radio>
-              <el-radio v-model="temp.sex" label="1">女</el-radio>
-            </el-form-item>
-            <el-form-item label="密码">
-              <el-input v-model="temp.password" type="password" auto-complete="off" />
-            </el-form-item>
-			<el-form-item label="账号状态">
-			  <el-radio v-model="temp.isForbid" border label="0">启用</el-radio>
-              <el-radio v-model="temp.isForbid" border label="1">禁用</el-radio>
-            </el-form-item>
-            <el-form-item label="手机号">
-              <el-input v-model="temp.mobile" />
-            </el-form-item>
-            <el-form-item label="工号">
-              <el-input v-model="temp.gongHao" />
-            </el-form-item>
-            <el-form-item label="排序号">
-              <el-input v-model="temp.sortSq" />
-            </el-form-item>
-            <!--选择父级部门-->
-            <el-form-item label="选择部门">
-              <el-tree
-                :data="data"
-                :props="defaultProps"
-                show-checkbox
-                @check-change="checkChange"
-                ref="tree"
-                node-key="rowGuid"
-                :check-strictly="true"
-              ></el-tree>
-            </el-form-item>
+            <el-row :gutter="30">
+              <el-col :span="20">
+                <el-form-item label="用户名称" prop="userName">
+                  <el-input v-model="temp.userName" />
+                </el-form-item>
+                <el-form-item label="登录名">
+                  <el-input v-model="temp.loginId" />
+                </el-form-item>
+                <el-form-item label="性别">
+                  <el-radio v-model="temp.sex" label="0">男</el-radio>
+                  <el-radio v-model="temp.sex" label="1">女</el-radio>
+                </el-form-item>
+                <el-form-item label="密码">
+                  <el-input v-model="temp.password" type="password" auto-complete="off" />
+                </el-form-item>
+                <el-form-item label="账号状态">
+                  <el-radio v-model="temp.isForbid" border label="0">启用</el-radio>
+                  <el-radio v-model="temp.isForbid" border label="1">禁用</el-radio>
+                </el-form-item>
+                <el-form-item label="手机号">
+                  <el-input v-model="temp.mobile" />
+                </el-form-item>
+                <el-form-item label="工号">
+                  <el-input v-model="temp.gongHao" />
+                </el-form-item>
+                <el-form-item label="排序号">
+                  <el-input v-model="temp.sortSq" />
+                </el-form-item>
+                <!--选择父级部门-->
+                <el-form-item label="选择部门">
+                  <el-tree
+                    :data="data"
+                    :props="defaultProps"
+                    show-checkbox
+                    @check-change="checkChange"
+                    ref="tree"
+                    node-key="rowGuid"
+                    :check-strictly="true"
+                  ></el-tree>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <div style="margin-top: 20px">
+                  <ul>
+                    
+                    <li v-for="item in userRoles" :key="item.rowGuid">
+                      <el-checkbox
+                        :label="item.rowGuid"
+                        border
+                        v-model="roleCheck"
+                        size="medium"
+                      >{{item.roleName}}</el-checkbox>
+                    </li>
+                  </ul>
+                </div>
+              </el-col>
+            </el-row>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">Cancel</el-button>
@@ -194,7 +210,9 @@ import {
   addUser,
   getTrees,
   updateUser,
-  deleteUser
+  deleteUser,
+  getAllRoles,
+  getCheckedRole
 } from "@/api/systemOption/user";
 import waves from "@/directive/waves"; // waves directive
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
@@ -208,20 +226,20 @@ export default {
   components: { Pagination },
   directives: { waves },
   filters: {
-	  getColorType(colorId){
-		  const colorMap = {
-			  0:'success',
-			  1:'danger'
-		  };
-		  return colorMap[colorId]
-	  },
-	  getColorName(colorId){
-		  const colorMap = {
-			  0:'启用',
-			  1:'禁用'
-		  };
-		  return colorMap[colorId]
-	  }
+    getColorType(colorId) {
+      const colorMap = {
+        0: "success",
+        1: "danger"
+      };
+      return colorMap[colorId];
+    },
+    getColorName(colorId) {
+      const colorMap = {
+        0: "启用",
+        1: "禁用"
+      };
+      return colorMap[colorId];
+    }
   },
   data() {
     return {
@@ -231,7 +249,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 20
       },
       showReviewer: false,
       temp: {
@@ -243,7 +261,7 @@ export default {
         password: "",
         deptGuid: "",
         sortSq: "",
-		isForbid:""
+        isForbid: ""
       },
       dialogFormVisible: false,
       dialogStatus: "",
@@ -263,7 +281,10 @@ export default {
         children: "children",
         label: "label"
       },
-      multipleSelection: []
+      multipleSelection: [],
+      roleCheck: [],
+      userRoles: [],
+      roleArray: []
     };
   },
   created() {
@@ -288,6 +309,11 @@ export default {
     handleCreate() {
       this.resetTemp();
       this.dialogStatus = "create";
+      getAllRoles().then(response => {
+        if (response.code == "0") {
+          this.userRoles = response.data;
+        }
+      });
       this.dialogFormVisible = true;
       this.$nextTick(() => {
         //清空树勾选
@@ -300,7 +326,7 @@ export default {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           let param = {};
-          param["roles"] = new Array();
+          param["roles"] = this.roleCheck;
           param["user"] = this.temp;
           addUser(param).then(res => {
             //静态刷新
@@ -324,7 +350,25 @@ export default {
       this.dialogFormVisible = true;
       //$nextTick用于延迟执行一段代码
       //有些还未加载完成 所以需要延迟函数
+      getAllRoles().then(response => {
+        if (response.code == "0") {
+          this.userRoles = response.data;
+        }
+      });
+      getCheckedRole(row.rowGuid).then(response => {
+        if (response.code == "0") {
+          this.roleArray = response.data;
+          let arr = [];
+          for (let i = 0; i < this.roleArray.length; i++) {
+            arr.push(this.roleArray[i].roleGuid);
+          }
+          this.roleCheck = arr;
+        }
+      });
+      
       this.$nextTick(() => {
+        //console.log(this.roleArray)
+        //console.log(arr)
         this.$refs.tree.setCheckedKeys([this.temp.deptGuid]);
         this.$refs["dataForm"].clearValidate();
       });
@@ -336,6 +380,21 @@ export default {
       this.temp.timestamp = new Date(this.temp.timestamp);
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
+      getAllRoles().then(response => {
+        if (response.code == "0") {
+          this.userRoles = response.data;
+        }
+      });
+      getCheckedRole(row.rowGuid).then(response => {
+        if (response.code == "0") {
+          this.roleArray = response.data;
+          let arr = [];
+          for (let i = 0; i < this.roleArray.length; i++) {
+            arr.push(this.roleArray[i].roleGuid);
+          }
+          this.roleCheck = arr;
+        }
+      });
       this.$nextTick(() => {
         this.$refs.tree.setCheckedKeys([this.temp.deptGuid]);
         this.$refs["dataForm"].clearValidate();
@@ -345,7 +404,7 @@ export default {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           let param = {};
-          param["roleGuids"] = new Array();
+          param["roleGuids"] = this.roleCheck;
           param["roleUser"] = this.temp;
           const tempData = Object.assign({}, param);
           tempData.timestamp = +new Date(tempData.timestamp);
@@ -431,6 +490,10 @@ export default {
         this.temp.deptGuid = "0";
       }
     },
+    // roleChange(item,self) {
+    //    console.log(this.roleCheck)
+
+    // },
 
     resetTemp() {
       this.temp = {};
