@@ -11,7 +11,7 @@ import java.util.Date;
  /**
  * <p>Title: MsOrder</p>
  * <p>Description:</p>
- * @author 
+ * @author wzl
  */
 public class MsOrder implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -49,6 +49,7 @@ public class MsOrder implements Serializable {
 	 private String merchantNumber;
 
 	 /**支付时间**/
+	 @JsonFormat(pattern="yyyy-MM-dd",timezone="GMT+8")
 	 private Date payTime;
 
 	/**
