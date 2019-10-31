@@ -43,6 +43,13 @@ public class MsOrder implements Serializable {
 	private String remark;
 	/**总金额**/
 	private BigDecimal orderMoney;
+	 /**
+	  * 商户订单号
+	  */
+	 private String merchantNumber;
+
+	 /**支付时间**/
+	 private Date payTime;
 
 	/**
 	 * 设置：
@@ -200,4 +207,20 @@ public class MsOrder implements Serializable {
 	public BigDecimal getOrderMoney() {
 		return orderMoney;
 	}
-}
+
+	 public String getMerchantNumber() {
+		 return merchantNumber;
+	 }
+
+	 public void setMerchantNumber(String merchantNumber) {
+		 this.merchantNumber = merchantNumber;
+	 }
+
+	 public Date getPayTime() {
+		 return payTime;
+	 }
+
+	 public void setPayTime(Date payTime) {
+		 this.payTime = payTime;
+	 }
+ }

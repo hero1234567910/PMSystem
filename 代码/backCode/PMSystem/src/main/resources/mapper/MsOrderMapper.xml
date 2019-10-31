@@ -19,6 +19,8 @@
         <result property="remark" column="remark"/>
         <result property="orderMoney" column="order_money"/>
 		<result property="updateTime" column="update_time"/>
+		<result property="merchantNumber" column="merchant_number"/>
+		<result property="payTime" column="pay_time"/>
     </resultMap>
 
 	<select id="getList" resultType="com.basic.javaframe.entity.MsOrder">
@@ -71,6 +73,8 @@
             <if test="orderMoney != null and orderMoney != ''"> and t.order_money = #{orderMoney} </if>
     		<if test="orderMoneyVague != null and orderMoneyVague != ''"> and t.order_money like concat('%',#{orderMoneyVague},'%') </if>
 			<if test="updateTime != null and update_time!=''">`update_time` = #{updateTime}</if>
+			<if test="merchant_number != null and merchant_number!=''">`merchant_number` = #{merchantNumber}</if>
+			<if test="pay_time != null and pay_time!=''">`pay_time` = #{payTime}</if>
         	and t.del_flag = 0
         </where>
     </sql>
@@ -90,7 +94,9 @@
 			`order_status`, 
 			`remark`, 
 			`order_money`,
-			`update_time`
+			`update_time`,
+			`merchant_number`,
+			`pay_time`
 		)
 		values
 		(
@@ -106,7 +112,9 @@
 			#{orderStatus}, 
 			#{remark}, 
 			#{orderMoney},
-			#{updateTime}
+			#{updateTime},
+			#{merchantNumber},
+			#{payTime}
 		)
 	</insert>
 	 
@@ -125,6 +133,8 @@
 			<if test="remark != null">`remark` = #{remark}, </if>
 			<if test="orderMoney != null">`order_money` = #{orderMoney},</if>
 			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+			<if test="merchantNumber != null">`merchant_number` = #{merchantNumber}</if>
+			<if test="payTime != null">`pay_time` = #{payTime}</if>
 		</set>
 		where row_guid = #{rowGuid}
 	</update>
