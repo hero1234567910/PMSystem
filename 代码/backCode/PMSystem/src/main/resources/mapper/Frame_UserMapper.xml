@@ -253,7 +253,7 @@
             <if test="lastloginTime != null and lastloginTime != ''">and t.lastlogin_time = #{lastloginTime}</if>
             <if test="sortSq  != null and sortSq!= ''">and t.sort_sq = #{sortSq }</if>
             <if test="openid != null">and t.openid = #{openid}</if>
-            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
+            <if test="updateTime != null and update_time!=''">and t.update_time = #{updateTime}</if>
             and t.del_flag = 0
         </where>
     </sql>

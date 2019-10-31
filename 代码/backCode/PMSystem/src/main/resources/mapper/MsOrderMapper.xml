@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.basic.javaframe.dao.MsOrderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.basic.javaframe.entity.MsOrder" id="msOrderMap">
+        <result property="rowId" column="row_id"/>
+        <result property="rowGuid" column="row_guid"/>
+        <result property="createTime" column="create_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="sortSq" column="sort_sq"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="orderUserGuid" column="order_userGuid"/>
+        <result property="orderItemGuid" column="order_itemGuid"/>
+        <result property="consigneeName" column="consignee_name"/>
+        <result property="consigneeMobile" column="consignee_mobile"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="remark" column="remark"/>
+        <result property="orderMoney" column="order_money"/>
+		<result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="getList" resultType="com.basic.javaframe.entity.MsOrder">
+		select * from ms_order t <include refid="where_clause" />
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by row_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="getCount" resultType="int">
+		select count(*) from ms_order t  <include refid="where_clause" />
+	</select>
+
+    <!-- 搜索数据区域 -->
+    <sql id="where_clause">
+        <where>
+            1=1
+            <if test="rowId != null and rowId != ''"> and t.row_id = #{rowId} </if>
+    		<if test="rowIdVague != null and rowIdVague != ''"> and t.row_id like concat('%',#{rowIdVague},'%') </if>
+            <if test="rowGuid != null and rowGuid != ''"> and t.row_guid = #{rowGuid} </if>
+    		<if test="rowGuidVague != null and rowGuidVague != ''"> and t.row_guid like concat('%',#{rowGuidVague},'%') </if>
+            <if test="createTime != null and createTime != ''"> and t.create_time = #{createTime} </if>
+    		<if test="createTimeVague != null and createTimeVague != ''"> and t.create_time like concat('%',#{createTimeVague},'%') </if>
+            <if test="delFlag != null and delFlag != ''"> and t.del_flag = #{delFlag} </if>
+    		<if test="delFlagVague != null and delFlagVague != ''"> and t.del_flag like concat('%',#{delFlagVague},'%') </if>
+            <if test="sortSq != null and sortSq != ''"> and t.sort_sq = #{sortSq} </if>
+    		<if test="sortSqVague != null and sortSqVague != ''"> and t.sort_sq like concat('%',#{sortSqVague},'%') </if>
+            <if test="orderNumber != null and orderNumber != ''"> and t.order_number = #{orderNumber} </if>
+    		<if test="orderNumberVague != null and orderNumberVague != ''"> and t.order_number like concat('%',#{orderNumberVague},'%') </if>
+            <if test="orderUserGuid != null and orderUserGuid != ''"> and t.order_userGuid = #{orderUserGuid} </if>
+    		<if test="orderUserGuidVague != null and orderUserGuidVague != ''"> and t.order_userGuid like concat('%',#{orderUserGuidVague},'%') </if>
+            <if test="orderItemGuid != null and orderItemGuid != ''"> and t.order_itemGuid = #{orderItemGuid} </if>
+    		<if test="orderItemGuidVague != null and orderItemGuidVague != ''"> and t.order_itemGuid like concat('%',#{orderItemGuidVague},'%') </if>
+            <if test="consigneeName != null and consigneeName != ''"> and t.consignee_name = #{consigneeName} </if>
+    		<if test="consigneeNameVague != null and consigneeNameVague != ''"> and t.consignee_name like concat('%',#{consigneeNameVague},'%') </if>
+            <if test="consigneeMobile != null and consigneeMobile != ''"> and t.consignee_mobile = #{consigneeMobile} </if>
+    		<if test="consigneeMobileVague != null and consigneeMobileVague != ''"> and t.consignee_mobile like concat('%',#{consigneeMobileVague},'%') </if>
+            <if test="orderStatus != null and orderStatus != ''"> and t.order_status = #{orderStatus} </if>
+    		<if test="orderStatusVague != null and orderStatusVague != ''"> and t.order_status like concat('%',#{orderStatusVague},'%') </if>
+            <if test="remark != null and remark != ''"> and t.remark = #{remark} </if>
+    		<if test="remarkVague != null and remarkVague != ''"> and t.remark like concat('%',#{remarkVague},'%') </if>
+            <if test="orderMoney != null and orderMoney != ''"> and t.order_money = #{orderMoney} </if>
+    		<if test="orderMoneyVague != null and orderMoneyVague != ''"> and t.order_money like concat('%',#{orderMoneyVague},'%') </if>
+			<if test="updateTime != null and update_time!=''">`update_time` = #{updateTime}</if>
+        	and t.del_flag = 0
+        </where>
+    </sql>
+	 
+	<insert id="save" parameterType="com.basic.javaframe.entity.MsOrder" useGeneratedKeys="true" keyProperty="rowId">
+		insert into ms_order
+		(
+			`row_guid`, 
+			`create_time`, 
+			`del_flag`, 
+			`sort_sq`, 
+			`order_number`, 
+			`order_userGuid`, 
+			`order_itemGuid`, 
+			`consignee_name`, 
+			`consignee_mobile`, 
+			`order_status`, 
+			`remark`, 
+			`order_money`,
+			`update_time`
+		)
+		values
+		(
+			#{rowGuid}, 
+			#{createTime}, 
+			#{delFlag}, 
+			#{sortSq}, 
+			#{orderNumber}, 
+			#{orderUserGuid}, 
+			#{orderItemGuid}, 
+			#{consigneeName}, 
+			#{consigneeMobile}, 
+			#{orderStatus}, 
+			#{remark}, 
+			#{orderMoney},
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.basic.javaframe.entity.MsOrder">
+		update ms_order 
+		<set>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="delFlag != null">`del_flag` = #{delFlag}, </if>
+			<if test="sortSq != null">`sort_sq` = #{sortSq}, </if>
+			<if test="orderNumber != null">`order_number` = #{orderNumber}, </if>
+			<if test="orderUserGuid != null">`order_userGuid` = #{orderUserGuid}, </if>
+			<if test="orderItemGuid != null">`order_itemGuid` = #{orderItemGuid}, </if>
+			<if test="consigneeName != null">`consignee_name` = #{consigneeName}, </if>
+			<if test="consigneeMobile != null">`consignee_mobile` = #{consigneeMobile}, </if>
+			<if test="orderStatus != null">`order_status` = #{orderStatus}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="orderMoney != null">`order_money` = #{orderMoney},</if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where row_guid = #{rowGuid}
+	</update>
+	
+	<delete id="deleteBatch">
+		update ms_order set `del_flag` = 1 where row_guid in 
+		<foreach item="rowGuid" collection="array" open="(" separator="," close=")">
+			#{rowGuid}
+		</foreach>
+	</delete>
+
+</mapper>
