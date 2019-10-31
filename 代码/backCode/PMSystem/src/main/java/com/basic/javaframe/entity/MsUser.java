@@ -33,6 +33,8 @@ public class MsUser implements Serializable {
 	/**手机号**/
 	private String mobile;
 
+	private Date updateTime;
+
 	/**
 	 * 设置：
 	 */
@@ -130,5 +132,11 @@ public class MsUser implements Serializable {
 		return mobile;
 	}
 
+	 public Date getUpdateTime() {
+		 return updateTime;
+	 }
 
-}
+	 public void setUpdateTime(Date updateTime) {
+		 this.updateTime = updateTime;
+	 }
+ }
