@@ -74,11 +74,11 @@ export default {
     }
     return {
       loginForm: {
-        loginId: 'admin',
-        password: '123456'
+        loginId: '',
+        password: ''
       },
       loginRules: {
-        loginId: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        loginId: [{ required: true, trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
